@@ -6,12 +6,12 @@ const getNetworkById = async (id: ObjectId) => {
   return QuantumPortalNetworkModel.findById(id);
 };
 
-export const createNetwork = async (network: any): Promise<any> => {
+export const createNetworks = async (network: any): Promise<any> => {
   const setNetwork = await QuantumPortalNetworkModel.insertMany(network);
   return setNetwork;
 };
 
-export const getAllNetworks = async (id: ObjectId): Promise<INetwork[]> => {
+export const getAllNetworks = async (): Promise<INetwork[]> => {
   const networks = await QuantumPortalNetworkModel.find();
   return networks;
 };
@@ -39,6 +39,20 @@ export const updateNetwork = async (
   const network = await getNetworkById(networkId);
   Object.assign(network, updateBody);
   await network.save();
+  return network;
+};
+
+export const updateNetworkVisitedBlocks = async (
+  chainId: number,
+  lastVisitedBlock: any,
+): Promise<INetwork> => {
+  const network = await QuantumPortalNetworkModel.findOneAndUpdate(
+    { chainId },
+    {
+      lastVisitedBlock: lastVisitedBlock,
+    },
+  );
+
   return network;
 };
 

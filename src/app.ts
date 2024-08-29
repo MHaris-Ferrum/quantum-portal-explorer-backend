@@ -2,7 +2,6 @@ import express, { Request, Response, Application, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import router from './routes';
-import crons from './crons';
 import httpStatus from 'http-status';
 import ApiError from './utils/ApiError';
 import { successHandler, errorHandler } from './config/morgan';

@@ -8,8 +8,8 @@ const router = express.Router();
 router
   .route('/')
   .post(
-    validate(networkValidation.createNetwork),
-    networkController.createNetwork,
+    validate(networkValidation.createNetworks),
+    networkController.createNetworks,
   )
   .get(networkController.getAllNetworks);
 

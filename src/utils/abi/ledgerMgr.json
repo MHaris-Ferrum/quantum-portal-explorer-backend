@@ -3,37 +3,49 @@
   "contractName": "QuantumPortalLedgerMgr",
   "sourceName": "contracts/quantumPortal/poc/QuantumPortalLedgerMgr.sol",
   "abi": [
+    { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
     {
       "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "overrideChainId",
-          "type": "uint256"
-        }
+        { "internalType": "address", "name": "target", "type": "address" }
       ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnableInvalidOwner",
+      "name": "AddressEmptyCode",
       "type": "error"
     },
     {
       "inputs": [
         {
           "internalType": "address",
-          "name": "account",
+          "name": "implementation",
           "type": "address"
         }
       ],
+      "name": "ERC1967InvalidImplementation",
+      "type": "error"
+    },
+    { "inputs": [], "name": "ERC1967NonPayable", "type": "error" },
+    { "inputs": [], "name": "FailedInnerCall", "type": "error" },
+    { "inputs": [], "name": "InvalidInitialization", "type": "error" },
+    { "inputs": [], "name": "NotInitializing", "type": "error" },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "owner", "type": "address" }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "account", "type": "address" }
+      ],
       "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    { "inputs": [], "name": "UUPSUnauthorizedCallContext", "type": "error" },
+    {
+      "inputs": [
+        { "internalType": "bytes32", "name": "slot", "type": "bytes32" }
+      ],
+      "name": "UUPSUnsupportedProxiableUUID",
       "type": "error"
     },
     {
@@ -136,6 +148,19 @@
         {
           "indexed": false,
           "internalType": "uint64",
+          "name": "version",
+          "type": "uint64"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
           "name": "remoteChainId",
           "type": "uint64"
         },
@@ -184,21 +209,9 @@
         },
         {
           "components": [
-            {
-              "internalType": "uint64",
-              "name": "chainId",
-              "type": "uint64"
-            },
-            {
-              "internalType": "uint64",
-              "name": "nonce",
-              "type": "uint64"
-            },
-            {
-              "internalType": "uint64",
-              "name": "timestamp",
-              "type": "uint64"
-            }
+            { "internalType": "uint64", "name": "chainId", "type": "uint64" },
+            { "internalType": "uint64", "name": "nonce", "type": "uint64" },
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" }
           ],
           "indexed": false,
           "internalType": "struct QuantumPortalLib.Block",
@@ -290,63 +303,53 @@
       "type": "event"
     },
     {
-      "inputs": [],
-      "name": "VERSION",
-      "outputs": [
+      "anonymous": false,
+      "inputs": [
         {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
+          "indexed": true,
+          "internalType": "address",
+          "name": "implementation",
+          "type": "address"
         }
       ],
+      "name": "Upgraded",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "UPGRADE_INTERFACE_VERSION",
+      "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "VERSION",
+      "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [],
       "name": "admin",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [],
       "name": "authorityMgr",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "uint64",
-          "name": "remoteChainId",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "blockNonce",
-          "type": "uint64"
-        },
+        { "internalType": "uint64", "name": "remoteChainId", "type": "uint64" },
+        { "internalType": "uint64", "name": "blockNonce", "type": "uint64" },
         {
           "components": [
-            {
-              "internalType": "uint64",
-              "name": "timestamp",
-              "type": "uint64"
-            },
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" },
             {
               "internalType": "address",
               "name": "remoteContract",
@@ -362,31 +365,11 @@
               "name": "sourceBeneficiary",
               "type": "address"
             },
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "methods",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "gas",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "fixedFee",
-              "type": "uint256"
-            }
+            { "internalType": "address", "name": "token", "type": "address" },
+            { "internalType": "uint256", "name": "amount", "type": "uint256" },
+            { "internalType": "bytes[]", "name": "methods", "type": "bytes[]" },
+            { "internalType": "uint256", "name": "gas", "type": "uint256" },
+            { "internalType": "uint256", "name": "fixedFee", "type": "uint256" }
           ],
           "internalType": "struct QuantumPortalLib.RemoteTransaction[]",
           "name": "transactions",
@@ -394,13 +377,7 @@
         }
       ],
       "name": "calculateBlockHash",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
+      "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
       "stateMutability": "pure",
       "type": "function"
     },
@@ -411,33 +388,17 @@
           "name": "targetChainId",
           "type": "uint256"
         },
-        {
-          "internalType": "uint256",
-          "name": "varSize",
-          "type": "uint256"
-        }
+        { "internalType": "uint256", "name": "varSize", "type": "uint256" }
       ],
       "name": "calculateFixedFee",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [],
       "name": "feeConvertor",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
       "stateMutability": "view",
       "type": "function"
     },
@@ -448,11 +409,7 @@
           "name": "remoteChainId",
           "type": "uint256"
         },
-        {
-          "internalType": "uint256",
-          "name": "blockNonce",
-          "type": "uint256"
-        },
+        { "internalType": "uint256", "name": "blockNonce", "type": "uint256" },
         {
           "internalType": "uint256[]",
           "name": "invalidBlockNonces",
@@ -468,21 +425,9 @@
           "name": "finalizers",
           "type": "address[]"
         },
-        {
-          "internalType": "bytes32",
-          "name": "salt",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint64",
-          "name": "expiry",
-          "type": "uint64"
-        },
-        {
-          "internalType": "bytes",
-          "name": "multiSignature",
-          "type": "bytes"
-        }
+        { "internalType": "bytes32", "name": "salt", "type": "bytes32" },
+        { "internalType": "uint64", "name": "expiry", "type": "uint64" },
+        { "internalType": "bytes", "name": "multiSignature", "type": "bytes" }
       ],
       "name": "finalize",
       "outputs": [],
@@ -492,54 +437,293 @@
     {
       "inputs": [],
       "name": "fixedFeeTarget",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "gateway",
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "uint64",
-          "name": "chainId",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "nonce",
-          "type": "uint64"
-        }
+        { "internalType": "uint64", "name": "chainId", "type": "uint64" },
+        { "internalType": "uint64", "name": "nonce", "type": "uint64" }
       ],
       "name": "getBlockIdx",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "pure",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "uint64",
-          "name": "chainId",
-          "type": "uint64"
-        }
+        { "internalType": "uint256", "name": "key", "type": "uint256" }
       ],
-      "name": "isLocalBlockReady",
+      "name": "getLastFinalizedBlock",
       "outputs": [
         {
-          "internalType": "bool",
+          "components": [
+            { "internalType": "uint64", "name": "chainId", "type": "uint64" },
+            { "internalType": "uint64", "name": "nonce", "type": "uint64" },
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" }
+          ],
+          "internalType": "struct QuantumPortalLib.Block",
           "name": "",
-          "type": "bool"
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "key", "type": "uint256" }
+      ],
+      "name": "getLastLocalBlock",
+      "outputs": [
+        {
+          "components": [
+            { "internalType": "uint64", "name": "chainId", "type": "uint64" },
+            { "internalType": "uint64", "name": "nonce", "type": "uint64" },
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" }
+          ],
+          "internalType": "struct QuantumPortalLib.Block",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "key", "type": "uint256" }
+      ],
+      "name": "getLastMinedBlock",
+      "outputs": [
+        {
+          "components": [
+            { "internalType": "uint64", "name": "chainId", "type": "uint64" },
+            { "internalType": "uint64", "name": "nonce", "type": "uint64" },
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" }
+          ],
+          "internalType": "struct QuantumPortalLib.Block",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "key", "type": "uint256" },
+        { "internalType": "uint256", "name": "idx", "type": "uint256" }
+      ],
+      "name": "getLocalBlockTransaction",
+      "outputs": [
+        {
+          "components": [
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" },
+            {
+              "internalType": "address",
+              "name": "remoteContract",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "sourceMsgSender",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "sourceBeneficiary",
+              "type": "address"
+            },
+            { "internalType": "address", "name": "token", "type": "address" },
+            { "internalType": "uint256", "name": "amount", "type": "uint256" },
+            { "internalType": "bytes[]", "name": "methods", "type": "bytes[]" },
+            { "internalType": "uint256", "name": "gas", "type": "uint256" },
+            { "internalType": "uint256", "name": "fixedFee", "type": "uint256" }
+          ],
+          "internalType": "struct QuantumPortalLib.RemoteTransaction",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "key", "type": "uint256" }
+      ],
+      "name": "getLocalBlockTransactionLength",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "key", "type": "uint256" }
+      ],
+      "name": "getLocalBlockTransactions",
+      "outputs": [
+        {
+          "components": [
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" },
+            {
+              "internalType": "address",
+              "name": "remoteContract",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "sourceMsgSender",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "sourceBeneficiary",
+              "type": "address"
+            },
+            { "internalType": "address", "name": "token", "type": "address" },
+            { "internalType": "uint256", "name": "amount", "type": "uint256" },
+            { "internalType": "bytes[]", "name": "methods", "type": "bytes[]" },
+            { "internalType": "uint256", "name": "gas", "type": "uint256" },
+            { "internalType": "uint256", "name": "fixedFee", "type": "uint256" }
+          ],
+          "internalType": "struct QuantumPortalLib.RemoteTransaction[]",
+          "name": "value",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "key", "type": "uint256" }
+      ],
+      "name": "getLocalBlocks",
+      "outputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "uint64",
+                  "name": "chainId",
+                  "type": "uint64"
+                },
+                { "internalType": "uint64", "name": "nonce", "type": "uint64" },
+                {
+                  "internalType": "uint64",
+                  "name": "timestamp",
+                  "type": "uint64"
+                }
+              ],
+              "internalType": "struct QuantumPortalLib.Block",
+              "name": "metadata",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct IQuantumPortalLedgerMgr.LocalBlock",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "key", "type": "uint256" }
+      ],
+      "name": "getMinedBlock",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "blockHash",
+              "type": "bytes32"
+            },
+            { "internalType": "address", "name": "miner", "type": "address" },
+            {
+              "internalType": "uint8",
+              "name": "invalidBlock",
+              "type": "uint8"
+            },
+            { "internalType": "uint256", "name": "stake", "type": "uint256" },
+            {
+              "internalType": "uint256",
+              "name": "totalValue",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint64",
+                  "name": "chainId",
+                  "type": "uint64"
+                },
+                { "internalType": "uint64", "name": "nonce", "type": "uint64" },
+                {
+                  "internalType": "uint64",
+                  "name": "timestamp",
+                  "type": "uint64"
+                }
+              ],
+              "internalType": "struct QuantumPortalLib.Block",
+              "name": "blockMetadata",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct IQuantumPortalLedgerMgr.MinedBlock",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "key", "type": "uint256" }
+      ],
+      "name": "getMinedBlockTransactions",
+      "outputs": [
+        {
+          "components": [
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" },
+            {
+              "internalType": "address",
+              "name": "remoteContract",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "sourceMsgSender",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "sourceBeneficiary",
+              "type": "address"
+            },
+            { "internalType": "address", "name": "token", "type": "address" },
+            { "internalType": "uint256", "name": "amount", "type": "uint256" },
+            { "internalType": "bytes[]", "name": "methods", "type": "bytes[]" },
+            { "internalType": "uint256", "name": "gas", "type": "uint256" },
+            { "internalType": "uint256", "name": "fixedFee", "type": "uint256" }
+          ],
+          "internalType": "struct QuantumPortalLib.RemoteTransaction[]",
+          "name": "value",
+          "type": "tuple[]"
         }
       ],
       "stateMutability": "view",
@@ -548,30 +732,47 @@
     {
       "inputs": [
         {
-          "internalType": "uint64",
-          "name": "chainId",
-          "type": "uint64"
-        }
+          "internalType": "address",
+          "name": "initialOwner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "initialAdmin",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_minerMinimumStake",
+          "type": "uint256"
+        },
+        { "internalType": "address", "name": "gateway", "type": "address" }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint64", "name": "chainId", "type": "uint64" }
+      ],
+      "name": "isLocalBlockReady",
+      "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint64", "name": "chainId", "type": "uint64" }
       ],
       "name": "lastRemoteMinedBlock",
       "outputs": [
         {
           "components": [
-            {
-              "internalType": "uint64",
-              "name": "chainId",
-              "type": "uint64"
-            },
-            {
-              "internalType": "uint64",
-              "name": "nonce",
-              "type": "uint64"
-            },
-            {
-              "internalType": "uint64",
-              "name": "timestamp",
-              "type": "uint64"
-            }
+            { "internalType": "uint64", "name": "chainId", "type": "uint64" },
+            { "internalType": "uint64", "name": "nonce", "type": "uint64" },
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" }
           ],
           "internalType": "struct QuantumPortalLib.Block",
           "name": "_block",
@@ -586,7 +787,7 @@
       "name": "ledger",
       "outputs": [
         {
-          "internalType": "address",
+          "internalType": "contract PortalLedgerUpgradeable",
           "name": "",
           "type": "address"
         }
@@ -596,16 +797,8 @@
     },
     {
       "inputs": [
-        {
-          "internalType": "uint64",
-          "name": "chainId",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "blockNonce",
-          "type": "uint64"
-        }
+        { "internalType": "uint64", "name": "chainId", "type": "uint64" },
+        { "internalType": "uint64", "name": "blockNonce", "type": "uint64" }
       ],
       "name": "localBlockByNonce",
       "outputs": [
@@ -618,11 +811,7 @@
                   "name": "chainId",
                   "type": "uint64"
                 },
-                {
-                  "internalType": "uint64",
-                  "name": "nonce",
-                  "type": "uint64"
-                },
+                { "internalType": "uint64", "name": "nonce", "type": "uint64" },
                 {
                   "internalType": "uint64",
                   "name": "timestamp",
@@ -640,11 +829,7 @@
         },
         {
           "components": [
-            {
-              "internalType": "uint64",
-              "name": "timestamp",
-              "type": "uint64"
-            },
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" },
             {
               "internalType": "address",
               "name": "remoteContract",
@@ -660,31 +845,11 @@
               "name": "sourceBeneficiary",
               "type": "address"
             },
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "methods",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "gas",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "fixedFee",
-              "type": "uint256"
-            }
+            { "internalType": "address", "name": "token", "type": "address" },
+            { "internalType": "uint256", "name": "amount", "type": "uint256" },
+            { "internalType": "bytes[]", "name": "methods", "type": "bytes[]" },
+            { "internalType": "uint256", "name": "gas", "type": "uint256" },
+            { "internalType": "uint256", "name": "fixedFee", "type": "uint256" }
           ],
           "internalType": "struct QuantumPortalLib.RemoteTransaction[]",
           "name": "",
@@ -696,23 +861,11 @@
     },
     {
       "inputs": [
-        {
-          "internalType": "uint64",
-          "name": "remoteChainId",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "blockNonce",
-          "type": "uint64"
-        },
+        { "internalType": "uint64", "name": "remoteChainId", "type": "uint64" },
+        { "internalType": "uint64", "name": "blockNonce", "type": "uint64" },
         {
           "components": [
-            {
-              "internalType": "uint64",
-              "name": "timestamp",
-              "type": "uint64"
-            },
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" },
             {
               "internalType": "address",
               "name": "remoteContract",
@@ -728,51 +881,19 @@
               "name": "sourceBeneficiary",
               "type": "address"
             },
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "methods",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "gas",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "fixedFee",
-              "type": "uint256"
-            }
+            { "internalType": "address", "name": "token", "type": "address" },
+            { "internalType": "uint256", "name": "amount", "type": "uint256" },
+            { "internalType": "bytes[]", "name": "methods", "type": "bytes[]" },
+            { "internalType": "uint256", "name": "gas", "type": "uint256" },
+            { "internalType": "uint256", "name": "fixedFee", "type": "uint256" }
           ],
           "internalType": "struct QuantumPortalLib.RemoteTransaction[]",
           "name": "transactions",
           "type": "tuple[]"
         },
-        {
-          "internalType": "bytes32",
-          "name": "salt",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint64",
-          "name": "expiry",
-          "type": "uint64"
-        },
-        {
-          "internalType": "bytes",
-          "name": "multiSignature",
-          "type": "bytes"
-        }
+        { "internalType": "bytes32", "name": "salt", "type": "bytes32" },
+        { "internalType": "uint64", "name": "expiry", "type": "uint64" },
+        { "internalType": "bytes", "name": "multiSignature", "type": "bytes" }
       ],
       "name": "mineRemoteBlock",
       "outputs": [],
@@ -781,16 +902,8 @@
     },
     {
       "inputs": [
-        {
-          "internalType": "uint64",
-          "name": "chainId",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "blockNonce",
-          "type": "uint64"
-        }
+        { "internalType": "uint64", "name": "chainId", "type": "uint64" },
+        { "internalType": "uint64", "name": "blockNonce", "type": "uint64" }
       ],
       "name": "minedBlockByNonce",
       "outputs": [
@@ -801,21 +914,13 @@
               "name": "blockHash",
               "type": "bytes32"
             },
-            {
-              "internalType": "address",
-              "name": "miner",
-              "type": "address"
-            },
+            { "internalType": "address", "name": "miner", "type": "address" },
             {
               "internalType": "uint8",
               "name": "invalidBlock",
               "type": "uint8"
             },
-            {
-              "internalType": "uint256",
-              "name": "stake",
-              "type": "uint256"
-            },
+            { "internalType": "uint256", "name": "stake", "type": "uint256" },
             {
               "internalType": "uint256",
               "name": "totalValue",
@@ -828,11 +933,7 @@
                   "name": "chainId",
                   "type": "uint64"
                 },
-                {
-                  "internalType": "uint64",
-                  "name": "nonce",
-                  "type": "uint64"
-                },
+                { "internalType": "uint64", "name": "nonce", "type": "uint64" },
                 {
                   "internalType": "uint64",
                   "name": "timestamp",
@@ -850,11 +951,7 @@
         },
         {
           "components": [
-            {
-              "internalType": "uint64",
-              "name": "timestamp",
-              "type": "uint64"
-            },
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" },
             {
               "internalType": "address",
               "name": "remoteContract",
@@ -870,31 +967,11 @@
               "name": "sourceBeneficiary",
               "type": "address"
             },
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "methods",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "gas",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "fixedFee",
-              "type": "uint256"
-            }
+            { "internalType": "address", "name": "token", "type": "address" },
+            { "internalType": "uint256", "name": "amount", "type": "uint256" },
+            { "internalType": "bytes[]", "name": "methods", "type": "bytes[]" },
+            { "internalType": "uint256", "name": "gas", "type": "uint256" },
+            { "internalType": "uint256", "name": "fixedFee", "type": "uint256" }
           ],
           "internalType": "struct QuantumPortalLib.RemoteTransaction[]",
           "name": "txs",
@@ -907,39 +984,28 @@
     {
       "inputs": [],
       "name": "minerMgr",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [],
       "name": "minerMinimumStake",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [],
       "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "proxiableUUID",
+      "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
       "stateMutability": "view",
       "type": "function"
     },
@@ -952,41 +1018,17 @@
     },
     {
       "inputs": [
-        {
-          "internalType": "uint64",
-          "name": "remoteChainId",
-          "type": "uint64"
-        },
+        { "internalType": "uint64", "name": "remoteChainId", "type": "uint64" },
         {
           "internalType": "address",
           "name": "remoteContract",
           "type": "address"
         },
-        {
-          "internalType": "address",
-          "name": "msgSender",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "beneficiary",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bytes",
-          "name": "method",
-          "type": "bytes"
-        }
+        { "internalType": "address", "name": "msgSender", "type": "address" },
+        { "internalType": "address", "name": "beneficiary", "type": "address" },
+        { "internalType": "address", "name": "token", "type": "address" },
+        { "internalType": "uint256", "name": "amount", "type": "uint256" },
+        { "internalType": "bytes", "name": "method", "type": "bytes" }
       ],
       "name": "registerTransaction",
       "outputs": [],
@@ -1002,41 +1044,11 @@
     },
     {
       "inputs": [
-        {
-          "internalType": "address",
-          "name": "_admin",
-          "type": "address"
-        }
+        { "internalType": "address", "name": "_admin", "type": "address" }
       ],
       "name": "setAdmin",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "stakes",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "state",
-      "outputs": [
-        {
-          "internalType": "contract QuantumPortalState",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -1058,11 +1070,7 @@
         },
         {
           "components": [
-            {
-              "internalType": "uint64",
-              "name": "timestamp",
-              "type": "uint64"
-            },
+            { "internalType": "uint64", "name": "timestamp", "type": "uint64" },
             {
               "internalType": "address",
               "name": "remoteContract",
@@ -1078,51 +1086,19 @@
               "name": "sourceBeneficiary",
               "type": "address"
             },
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "methods",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "gas",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "fixedFee",
-              "type": "uint256"
-            }
+            { "internalType": "address", "name": "token", "type": "address" },
+            { "internalType": "uint256", "name": "amount", "type": "uint256" },
+            { "internalType": "bytes[]", "name": "methods", "type": "bytes[]" },
+            { "internalType": "uint256", "name": "gas", "type": "uint256" },
+            { "internalType": "uint256", "name": "fixedFee", "type": "uint256" }
           ],
           "internalType": "struct QuantumPortalLib.RemoteTransaction[]",
           "name": "transactions",
           "type": "tuple[]"
         },
-        {
-          "internalType": "bytes32",
-          "name": "salt",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint64",
-          "name": "expiry",
-          "type": "uint64"
-        },
-        {
-          "internalType": "bytes",
-          "name": "multiSignature",
-          "type": "bytes"
-        },
+        { "internalType": "bytes32", "name": "salt", "type": "bytes32" },
+        { "internalType": "uint64", "name": "expiry", "type": "uint64" },
+        { "internalType": "bytes", "name": "multiSignature", "type": "bytes" },
         {
           "internalType": "address",
           "name": "rewardReceiver",
@@ -1136,13 +1112,18 @@
     },
     {
       "inputs": [
-        {
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
+        { "internalType": "address", "name": "newOwner", "type": "address" }
       ],
       "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "miner", "type": "address" }
+      ],
+      "name": "unregisterMiner",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1193,11 +1174,16 @@
     },
     {
       "inputs": [
-        {
-          "internalType": "address",
-          "name": "_ledger",
-          "type": "address"
-        }
+        { "internalType": "address", "name": "_gateway", "type": "address" }
+      ],
+      "name": "updateGateway",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "_ledger", "type": "address" }
       ],
       "name": "updateLedger",
       "outputs": [],
@@ -1206,11 +1192,7 @@
     },
     {
       "inputs": [
-        {
-          "internalType": "address",
-          "name": "_minerMgr",
-          "type": "address"
-        }
+        { "internalType": "address", "name": "_minerMgr", "type": "address" }
       ],
       "name": "updateMinerMgr",
       "outputs": [],
@@ -1219,11 +1201,7 @@
     },
     {
       "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
+        { "internalType": "uint256", "name": "amount", "type": "uint256" }
       ],
       "name": "updateMinerMinimumStake",
       "outputs": [],
@@ -1234,25 +1212,20 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_state",
+          "name": "newImplementation",
           "type": "address"
-        }
+        },
+        { "internalType": "bytes", "name": "data", "type": "bytes" }
       ],
-      "name": "updateState",
+      "name": "upgradeToAndCall",
       "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "payable",
       "type": "function"
     },
     {
       "inputs": [],
       "name": "varFeeTarget",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
       "stateMutability": "view",
       "type": "function"
     }

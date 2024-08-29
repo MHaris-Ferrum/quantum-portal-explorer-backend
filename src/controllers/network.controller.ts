@@ -1,13 +1,13 @@
 import { networkService } from '../services';
 import { Request, Response, NextFunction } from 'express';
 
-export const createNetwork = async (
+export const createNetworks = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const setNetwork = await networkService.createNetwork(req.body);
+    const setNetwork = await networkService.createNetworks(req.body);
     res.send(setNetwork);
   } catch (error) {
     next(error);
@@ -20,7 +20,7 @@ export const getAllNetworks = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const networks = await networkService.getAllNetworks(req.params.id as any);
+    const networks = await networkService.getAllNetworks();
     res.send(networks);
   } catch (error) {
     next(error);

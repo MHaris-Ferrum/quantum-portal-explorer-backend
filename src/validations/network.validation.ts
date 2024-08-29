@@ -1,11 +1,16 @@
 import Joi from 'joi';
 import { objectId } from './custom';
 
-export const createNetwork = {
+export const createNetworks = {
   body: Joi.array().items(
     Joi.object().keys({
       name: Joi.string().required(),
       rpcUrl: Joi.string().required(),
+      chainId: Joi.number().required(),
+      startBlock: Joi.number().required(),
+      contractAddress: Joi.string().required(),
+      lastVisitedBlock: Joi.number().required(),
+      logo: Joi.string().required(),
     }),
   ),
 };
